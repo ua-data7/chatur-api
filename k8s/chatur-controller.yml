@@ -28,7 +28,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: controller
-        image: harbor.cyverse.org/ai/fastchat
+        image: harbor.cyverse.org/ai/fastchat:latest
         resources:
           requests:
             cpu: "320m"
