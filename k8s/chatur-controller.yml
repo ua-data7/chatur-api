@@ -39,7 +39,7 @@ spec:
             memory: "3Gi"
             ephemeral-storage: "1Gi"
         args:
-        - "python3"
+        - "python3.9"
         - "-m"
         - "fastchat.serve.controller"
         - "--host"
