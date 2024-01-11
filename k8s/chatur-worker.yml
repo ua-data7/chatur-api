@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatur-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: chatur-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 200%
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: chatur-worker
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - chatur-worker
+              topologyKey: kubernetes.io/hostname
+      restartPolicy: Always
+      containers:
+        - name: controller
+          image:
+            harbor.cyverse.org/ai/fastchat:latest
+            # resources:
+            #   requests:
+            #     cpu: "320m"
+            #     memory: "1Gi"
+            #     ephemeral-storage: "1Gi"
+            #   limits:
+            #     cpu: "3000m"
+            #     memory: "3Gi"
+            #     ephemeral-storage: "1Gi"
+          env:
+            - name: TRANSFORMERS_CACHE
+              value: "/iplant/home/shared/chatur/models"
+          args:
+            - "python3.9"
+            - "-m"
+            - "fastchat.serve.vllm_worker"
+            - "--model-names"
+            - "vicuna-7b-v1.5"
+            - "--model-path"
+            - "lmsys/vicuna-7b-v1.5"
+            - "--worker-address"
+            - "http://chatur-worker"
+            - "--controller-address"
+            - "http://chatur-controller"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "21002"
+          ports:
+            - name: listen-port
+              containerPort: 21002
+          # livenessProbe:
+          #   httpGet:
+          #     path: /test_connection
+          #     port: 21002
+          #   failureThreshold: 1
+          #   periodSeconds: 10
+          # startupProbe:
+          #   httpGet:
+          #     path: /test_connection
+          #     port: 21002
+          #   failureThreshold: 30
+          #   periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatur-worker
+spec:
+  selector:
+    app.kubernetes.io/name: chatur-worker
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: listen-port
