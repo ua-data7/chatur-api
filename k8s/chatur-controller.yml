@@ -24,6 +24,7 @@ spec:
                 operator: In
                 values:
                 - chatur-controller
+            topologyKey: kubernetes.io/hostname
       restartPolicy: Always
       containers:
       - name: controller
@@ -37,17 +38,17 @@ spec:
             cpu: "3000m"
             memory: "3Gi"
             ephemeral-storage: "1Gi"
-      args:
-      - "python3"
-      - "-m"
-      - "fastchat.serve.controller"
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "21001"
-      ports:
-        name: listen-port
-        container-port: 21001
+        args:
+        - "python3"
+        - "-m"
+        - "fastchat.serve.controller"
+        - "--host"
+        - "0.0.0.0"
+        - "--port"
+        - "21001"
+        ports:
+        - name: listen-port
+          containerPort: 21001
         livenessProbe:
           httpGet:
             path: /test_connection
