@@ -21,6 +21,7 @@ spec:
       containers:
         - name: llmserve
           image: harbor.cyverse.org/ai/llmserve:latest
+          imagePullPolicy: Always
           args:
             - "python3"
             - "/opt/langserve/llmserve2.py"
@@ -36,7 +37,7 @@ spec:
           startupProbe:
             httpGet:
               path: /docs
-              port: 80
+              port: 8000
             failureThreshold: 10
             periodSeconds: 10
 ---
