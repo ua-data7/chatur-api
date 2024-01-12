@@ -1,0 +1,32 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apisix-ingress
+  namespace: apisix
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    #nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    #cert-manager.io/issuer: "letsencrypt-staging"
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+   - hosts:
+     - "chatur-api.cyverse.ai"
+     secretName: "chatur-tls"
+  rules:
+  - host: "chatur-api.cyverse.ai"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: apisix-gateway
+            port:
+              number: 80
+
+
