@@ -86,7 +86,7 @@ spec:
         - name: vectordb
           mountPath: "/vectordb"
       - name: ollama
-        image: ollama/ollama:0.1.20
+        image: ollama/ollama:0.1.19
         resources:
           requests:
             cpu: "500m"
