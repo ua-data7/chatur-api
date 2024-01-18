@@ -54,11 +54,11 @@ spec:
         - "/vectordb"
         resources:
           requests:
-            cpu: "100m"
+            cpu: "200m"
             memory: "10Gi"
             ephemeral-storage: "20Gi"
           limits:
-            cpu: "100m"
+            cpu: "1"
             memory: "10Gi"
             ephemeral-storage: "20Gi"
         ports:
@@ -85,11 +85,11 @@ spec:
         image: ollama/ollama:0.1.20
         resources:
           requests:
-            cpu: "100m"
+            cpu: "500m"
             memory: "10Gi"
             ephemeral-storage: "20Gi"
           limits:
-            cpu: "100m"
+            cpu: "2"
             memory: "10Gi"
             ephemeral-storage: "20Gi"
             nvidia.com/gpu: 1
