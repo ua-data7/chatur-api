@@ -55,6 +55,7 @@ spec:
         - "0.0.0.0"
         - "80"
         - "/vectordb"
+        - "127.0.0.1"
         resources:
           requests:
             cpu: "200m"
