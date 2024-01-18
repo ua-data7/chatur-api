@@ -47,7 +47,7 @@ spec:
           mountPath: "/vectordb"
       containers:
       - name: langclient
-        image: harbor.cyverse.org/ai/langclient:0.0.2
+        image: harbor.cyverse.org/ai/langclient:0.0.3
         command:
         - "python3"
         - "/opt/langserve/langclient.py"
