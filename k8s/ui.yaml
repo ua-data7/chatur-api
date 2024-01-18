@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  namespace: chatur
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 200%
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ui
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: ui
+          image: harbor.cyverse.org/ai/ui:latest
+          imagePullPolicy: Always
+          ports:
+            - name: listen-port
+              containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /favicon.ico
+              port: 3000
+            failureThreshold: 1
+            timeoutSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /favicon.ico
+              port: 3000
+            failureThreshold: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+              ephemeral-storage: "500Mi"
+            limits:
+              cpu: "500m"
+              memory: "2Gi"
+              ephemeral-storage: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  namespace: chatur
+spec:
+  selector:
+    app.kubernetes.io/name: ui
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: listen-port
