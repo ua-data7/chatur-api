@@ -26,7 +26,6 @@ spec:
       - name: stage-vectordb
         image: harbor.cyverse.org/ai/ragcopy:0.0.1
         args:
-        - "ragcopy"
         - "--src"
         - "/iplant/home/shared/chatur/vectordb"
         - "--dest"
