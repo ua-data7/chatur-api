@@ -24,7 +24,7 @@ spec:
       restartPolicy: Always
       initContainers:
       - name: stage-vectordb
-        image: harbor.cyverse.org/ai/ragcopy:0.0.1
+        image: harbor.cyverse.org/ai/ragcopy:0.0.2
         args:
         - "--src"
         - "/iplant/home/shared/chatur/vectordb"
