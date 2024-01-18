@@ -101,10 +101,11 @@ spec:
           containerPort: 11434
         lifecycle:
           postStart:
-            command:
-            - "ollama"
-            - "pull"
-            - "mistral"
+            exec:
+              command:
+              - "ollama"
+              - "pull"
+              - "mistral"
         livenessProbe:
           httpGet:
             path: /
