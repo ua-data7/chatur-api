@@ -37,6 +37,9 @@ spec:
               port: 3000
             failureThreshold: 10
             periodSeconds: 10
+          envFrom:
+            - secretRef:
+                name: ui-api-config
           resources:
             requests:
               cpu: "100m"
@@ -59,3 +62,12 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: listen-port
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ui-api-config
+  namespace: chatur
+stringData:
+  NEXT_PUBLIC_CHAT_API_URL: http://chatur-api-server/v1/chat/completions
+  NEXT_PUBLIC_CHAT_API_KEY: "<EMPTY>"
