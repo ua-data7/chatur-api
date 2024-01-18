@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langserve
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: langserve
+  strategy:
+    rollingUpdate:
+      maxSurge: 200%
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: langserve
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - langserve
+              topologyKey: kubernetes.io/hostname
+      restartPolicy: Always
+      containers:
+        - name: langserve
+          image: harbor.cyverse.org/ai/langserve:latest
+          env:
+            - name: OPENAI_API_URL
+              value: "http://chatur-api-server/v1"
+            - name: OPENAI_API_KEY
+              value: "<EMPTY>"
+          ports:
+            - name: listen-port
+              containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /docs
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /docs
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: vectordb
+              mountPath: /opt/vectorstore
+      volumes:
+        - name: vectordb
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: langserve
+spec:
+  selector:
+    app.kubernetes.io/name: langserve
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: listen-port
