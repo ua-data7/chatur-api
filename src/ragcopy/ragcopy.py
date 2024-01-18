@@ -34,9 +34,6 @@ def parse_args():
     parser.add_argument(
         "--irods-port", help="the port number to use when connecting to the data store", type=int, default=1247
     )
-    parser.add_argument(
-        "--run-period", help="the number of seconds to wait between syncs", type=int, default=600
-    )
     return parser.parse_args()
 
 def create_irods_session(args):
@@ -77,8 +74,6 @@ def run_copy(args):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s:")
     args = parse_args()
-    while True:
-        logging.info("sync begin")
-        run_copy(args)
-        logging.info("sync end")
-        time.sleep(args.run_period)
+    logging.info("sync begin")
+    run_copy(args)
+    logging.info("sync end")
