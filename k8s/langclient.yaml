@@ -55,12 +55,12 @@ spec:
         resources:
           requests:
             cpu: "100m"
-            memory: "5Gi"
-            ephemeral-storage: "15Gi"
+            memory: "10Gi"
+            ephemeral-storage: "20Gi"
           limits:
             cpu: "100m"
-            memory: "5Gi"
-            ephemeral-storage: "15Gi"
+            memory: "10Gi"
+            ephemeral-storage: "20Gi"
         ports:
         - name: listen-port
           containerPort: 80
@@ -81,6 +81,34 @@ spec:
         volumeMounts:
         - name: vectordb
           mountPath: "/vectordb"
+      - name: ollama
+        image: ollama/ollama:0.1.20
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "10Gi"
+            ephemeral-storage: "20Gi"
+          limits:
+            cpu: "100m"
+            memory: "10Gi"
+            ephemeral-storage: "20Gi"
+        ports:
+        - name: ollama-listen-port
+          containerPort: 11434
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 11434
+          failureThreshold: 1
+          timeoutSeconds: 5
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /
+            port: 11434
+          failureThreshold: 10
+          timeoutSeconds: 5
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
