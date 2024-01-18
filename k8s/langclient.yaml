@@ -21,6 +21,9 @@ spec:
       - name: vectordb
         emptyDir:
           sizeLimit: 10Gi
+      - name: llm_model
+        emptyDir:
+          sizeLimit: 10Gi
       restartPolicy: Always
       initContainers:
       - name: stage-vectordb
@@ -110,6 +113,9 @@ spec:
           failureThreshold: 10
           timeoutSeconds: 5
           periodSeconds: 10
+        volumeMounts:
+        - name: llm_model
+          mountPath: "/root/.ollama/models"
 ---
 apiVersion: v1
 kind: Service
