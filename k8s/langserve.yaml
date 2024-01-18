@@ -29,6 +29,13 @@ spec:
       containers:
         - name: langserve
           image: harbor.cyverse.org/ai/langserve:latest
+          command:
+            - "python3"
+          args:
+            - "/opt/langserve/langclient.py"
+            - "127.0.0.1"
+            - "80"
+            - /opt/vectorstore
           env:
             - name: OPENAI_API_URL
               value: "http://chatur-api-server/v1"
