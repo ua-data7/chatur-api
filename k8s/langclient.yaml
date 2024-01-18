@@ -93,7 +93,7 @@ spec:
             memory: "10Gi"
             ephemeral-storage: "20Gi"
         ports:
-        - name: ollama-listen-port
+        - name: ollama
           containerPort: 11434
         livenessProbe:
           httpGet:
