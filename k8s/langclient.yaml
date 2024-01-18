@@ -45,8 +45,8 @@ spec:
       containers:
       - name: langclient
         image: harbor.cyverse.org/ai/langclient:0.0.1
+        command: "python3"
         args:
-        - "python3"
         - "/opt/langserve/langclient.py"
         - "0.0.0.0"
         - "80"
