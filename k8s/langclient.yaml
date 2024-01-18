@@ -99,6 +99,12 @@ spec:
         ports:
         - name: ollama
           containerPort: 11434
+        lifecycle:
+          postStart:
+            command:
+            - "ollama"
+            - "pull"
+            - "mistral"
         livenessProbe:
           httpGet:
             path: /
