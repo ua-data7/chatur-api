@@ -69,5 +69,5 @@ metadata:
   name: ui-api-config
   namespace: chatur
 stringData:
-  NEXT_PUBLIC_CHAT_API_URL: http://chatur-api-server/v1/chat/completions
+  NEXT_PUBLIC_CHAT_API_URL: https://chatur-api.cyverse.ai/v1/chat/completions
   NEXT_PUBLIC_CHAT_API_KEY: "<EMPTY>"
