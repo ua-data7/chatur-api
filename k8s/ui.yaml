@@ -20,8 +20,13 @@ spec:
       restartPolicy: Always
       containers:
         - name: ui
-          image: harbor.cyverse.org/ai/ui:latest
+          image: harbor.cyverse.org/ai/ui:test-env
           imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - '-c'
+          args:
+            - 'env | grep NEXT_ > /src/.env && npm run build && npm start'
           ports:
             - name: listen-port
               containerPort: 3000
@@ -29,14 +34,16 @@ spec:
             httpGet:
               path: /favicon.ico
               port: 3000
-            failureThreshold: 1
+            failureThreshold: 20
             timeoutSeconds: 5
+            initialDelaySeconds: 150
           startupProbe:
             httpGet:
               path: /favicon.ico
               port: 3000
             failureThreshold: 10
             periodSeconds: 10
+            initialDelaySeconds: 150
           envFrom:
             - secretRef:
                 name: ui-api-config
