@@ -22,11 +22,6 @@ spec:
         - name: ui
           image: harbor.cyverse.org/ai/ui:test-env
           imagePullPolicy: Always
-          command:
-            - /bin/sh
-            - '-c'
-          args:
-            - 'env | grep NEXT_ > /src/.env && npm run build && npm start'
           ports:
             - name: listen-port
               containerPort: 3000
