@@ -20,7 +20,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: ui
-          image: harbor.cyverse.org/ai/ui:test-env
+          image: harbor.cyverse.org/ai/ui:latest
           imagePullPolicy: Always
           ports:
             - name: listen-port
