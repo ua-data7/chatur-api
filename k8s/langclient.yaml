@@ -32,7 +32,7 @@ spec:
         - "--src"
         - "/iplant/home/shared/chatur/vectordb"
         - "--dest"
-        - "/vectordb"
+        - "/vectordb/RNR355"
         resources:
           requests:
             cpu: "100m"
