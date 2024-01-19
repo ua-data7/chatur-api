@@ -96,6 +96,7 @@ spec:
             cpu: "2"
             memory: "10Gi"
             ephemeral-storage: "20Gi"
+            nvidia.com/gpu: 1
         ports:
         - name: ollama
           containerPort: 11434
