@@ -71,5 +71,5 @@ metadata:
   name: ui-api-config
   namespace: chatur
 stringData:
-  CHAT_API_URL: http://chatur-api-server/v1/chat/completions
+  CHAT_API_URL: http://langclient/langserve/invoke
   CHAT_API_KEY: "<EMPTY>"
