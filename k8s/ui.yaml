@@ -42,11 +42,11 @@ spec:
                 name: ui-api-config
           resources:
             requests:
-              cpu: "100m"
+              cpu: "200m"
               memory: "512Mi"
               ephemeral-storage: "500Mi"
             limits:
-              cpu: "500m"
+              cpu: "800m"
               memory: "2Gi"
               ephemeral-storage: "1Gi"
 ---
