@@ -31,14 +31,12 @@ spec:
               port: 3000
             failureThreshold: 20
             timeoutSeconds: 5
-            initialDelaySeconds: 150
           startupProbe:
             httpGet:
               path: /favicon.ico
               port: 3000
             failureThreshold: 10
             periodSeconds: 10
-            initialDelaySeconds: 150
           envFrom:
             - secretRef:
                 name: ui-api-config
