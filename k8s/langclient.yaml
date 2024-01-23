@@ -54,7 +54,7 @@ spec:
         args:
         - "0.0.0.0"
         - "80"
-        - "/vectordb/CYVERSE"
+        - "/vectordb/RNR355"
         - "127.0.0.1"
         resources:
           requests:
