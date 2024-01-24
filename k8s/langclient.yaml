@@ -55,7 +55,7 @@ spec:
         - "0.0.0.0"
         - "80"
         - "/vectordb/RNR355"
-        - "127.0.0.1"
+        - "ollama"
         resources:
           requests:
             cpu: "200m"
@@ -85,45 +85,6 @@ spec:
         volumeMounts:
         - name: vectordb
           mountPath: "/vectordb"
-      - name: ollama
-        image: ollama/ollama:0.1.19
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "10Gi"
-            ephemeral-storage: "20Gi"
-          limits:
-            cpu: "2"
-            memory: "10Gi"
-            ephemeral-storage: "20Gi"
-            nvidia.com/gpu: 1
-        ports:
-        - name: ollama
-          containerPort: 11434
-        lifecycle:
-          postStart:
-            exec:
-              command:
-              - "ollama"
-              - "pull"
-              - "mistral"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 11434
-          failureThreshold: 1
-          timeoutSeconds: 5
-          periodSeconds: 10
-        startupProbe:
-          httpGet:
-            path: /
-            port: 11434
-          failureThreshold: 10
-          timeoutSeconds: 5
-          periodSeconds: 10
-        volumeMounts:
-        - name: llm-model
-          mountPath: "/root/.ollama/models"
 ---
 apiVersion: v1
 kind: Service
