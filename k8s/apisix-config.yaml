@@ -1,0 +1,378 @@
+#---
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: apisix-config-secrets
+#  namespace: apisix
+#stringData:
+#  CHATUR_OAUTH2_CLIENT_ID: "POPULATE_THIS"
+#  CHATUR_OAUTH2_CLIENT_SECRET: "POPULATE_THIS"
+#  CHATUR_OAUTH2_DISCOVERY: "POPULATE_THIS"
+#  CHATUR_OAUTH2_REALM: "POPULATE_THIS"
+#  CHATUR_OAUTH2_SECRET: "POPULATE_THIS"
+#  CHATUR_API_KEY: POPULATE_THIS
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apisix-apply-configuration
+  namespace: apisix
+spec:
+  restartPolicy: Never
+  containers:
+    - name: apisix-config
+      image: python:3.10
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          pip install jinja2 requests PyYAML
+          python /opt/scripts/entrypoint.py \
+            --apisix_configmap /opt/apisix-configmap \
+            --routes /opt/apisix-routes \
+            --upstreams /opt/apisix-upstreams \
+            --consumers /opt/apisix-consumers
+      envFrom:
+        - secretRef:
+            name: apisix-config-secrets
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+          ephemeral-storage: "128Mi"
+        limits:
+          cpu: "200m"
+          memory: "512Mi"
+          ephemeral-storage: "128Mi"
+      volumeMounts:
+        - name: scripts
+          mountPath: "/opt/scripts"
+          readOnly: true
+        - name: apisix-configmap
+          mountPath: "/opt/apisix-configmap"
+          readOnly: true
+        - name: apisix-routes
+          mountPath: "/opt/apisix-routes"
+        - name: apisix-upstreams
+          mountPath: "/opt/apisix-upstreams"
+        - name: apisix-consumers
+          mountPath: "/opt/apisix-consumers"
+  volumes:
+    - name: scripts
+      configMap:
+        name: apisix-config-script
+    # mount the apisix configmap to get the admin token to talk to apisix admin api
+    - name: apisix-configmap
+      configMap:
+        name: apisix
+    - name: apisix-routes
+      secret:
+        secretName: apisix-routes
+    - name: apisix-upstreams
+      secret:
+        secretName: apisix-upstreams
+    - name: apisix-consumers
+      secret:
+        secretName: apisix-consumers
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apisix-routes
+  namespace: apisix
+stringData:
+  fastchat_api: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/v1/*",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+         "key-auth": {
+           "header": "Authorization"
+         }
+      },
+      "upstream_id": "fastchat"
+    }
+  fastchat_completion: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/v1/chat/completions",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "key-auth": {
+          "header": "Authorization"
+        }
+      },
+      "upstream_id": "fastchat"
+    }
+  ollama: |
+    {
+        "methods": ["GET", "POST"],
+        "uri": "/ollama/*",
+        "host": "chatur-api.cyverse.ai",
+        "priority": 100,
+        "plugins": {
+          "key-auth": {
+            "header": "Authorization"
+          },
+          "proxy-rewrite": {
+            "regex_uri": ["^/ollama/(.*)", "/$1"]
+          }
+        },
+        "upstream_id": "ollama"
+    }
+  ollama_api_generate_slash: |
+    {
+        "methods": ["GET", "POST"],
+        "uri": "/ollama/api/generate/",
+        "host": "chatur-api.cyverse.ai",
+        "priority": 110,
+        "plugins": {
+          "proxy-rewrite": {
+          "regex_uri": ["^/ollama/(.*)/$", "/$1"]
+          },
+          "limit-req": {
+              "rate": 10,
+              "burst": 20,
+              "rejected_code": 429,
+              "key_type": "var",
+              "key": "remote_addr"
+          }
+        },
+        "upstream_id": "ollama"
+    }
+  langserve: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve/*",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve"
+    }
+  langserve_playground: |
+    {
+      "methods": ["GET"],
+      "uri": "/langserve/playground",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve"
+    }
+  langserve_stream_log: |
+    {
+      "methods": ["POST"],
+      "uri": "/langserve/stream_log",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve"
+    }
+  ui: |
+    {
+      "uri": "/*",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 10,
+      "plugins": {
+        "openid-connect": {
+          "client_id": "{{ CHATUR_OAUTH2_CLIENT_ID }}",
+          "client_secret": "{{ CHATUR_OAUTH2_CLIENT_SECRET }}",
+          "discovery": "{{ CHATUR_OAUTH2_DISCOVERY }}",
+          "scope": "openid email profile",
+          "bearer_only": false,
+          "realm": "{{ CHATUR_OAUTH2_REALM }}",
+          "redirect_uri": "https://chatur-api.cyverse.ai/redirect",
+          "logout_path": "/logout",
+    	    "set_userinfo_header": true,
+    	    "session": {
+    	      "secret": "{{ CHATUR_OAUTH2_SECRET }}"
+          }
+        }
+      },
+      "upstream_id": "ui"
+    }
+  ui_images: |
+    {
+      "methods": ["GET"],
+      "uri": "/images/*",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+      },
+      "upstream_id": "ui"
+    }
+  ui_icon: |
+    {
+      "methods": ["GET"],
+      "uri": "/favicon.ico",
+      "host": "chatur-api.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+      },
+      "upstream_id": "ui"
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apisix-upstreams
+  namespace: apisix
+stringData:
+  fastchat: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "chatur-api-server.chatur.svc:80": 1
+      }
+    }
+  ollama: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "ollama.chatur.svc:11434": 1
+      }
+    }
+  langserve: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient.chatur.svc:80": 1
+      }
+    }
+  ui: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "ui.chatur.svc:80": 1
+      }
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apisix-consumers
+  namespace: apisix
+stringData:
+  chatur: |
+    {"username":"chartur","plugins":{"key-auth":{"key":"Bearer {{ CHATUR_API_KEY }}","header":"Authorization"}}} 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apisix-config-script
+  namespace: apisix
+data:
+  entrypoint.py: |
+    import jinja2
+    import requests
+    import os
+    import argparse
+    import yaml
+    import json
+    from typing import Dict
+    
+    # call the apisix-admin service
+    admin_api_url = "http://apisix-admin:9180"
+    
+    def main():
+        parser = argparse.ArgumentParser(
+            prog="entrypoint",
+            description="Configure apisix via its admin api")
+    
+        parser.add_argument("--apisix_configmap", type=str, help="directory that apisix's configmap is mounted")
+        parser.add_argument("--routes", type=str, required=True, help="directory for routes json files")
+        parser.add_argument("--upstreams", type=str, required=True, help="directory for upstreams json files")
+        parser.add_argument("--consumers", type=str, required=True, help="directory for consumers json files")
+        parser.add_argument("--admin_key", type=str, help="get admin key from cli args instead of from files")
+        parser.add_argument("--admin_api_url", type=str, default="http://apisix-admin:9180", help="admin api url")
+        args = parser.parse_args()
+    
+        global admin_api_url
+        admin_api_url = args.admin_api_url
+        if args.admin_key:
+            admin_key = args.admin_key
+        else:
+            admin_key = get_admin_key(args.apisix_configmap)
+        make_api_call_from_files(args.consumers, admin_key, "/apisix/admin/consumers")
+        make_api_call_from_files(args.upstreams, admin_key, "/apisix/admin/upstreams")
+        make_api_call_from_files(args.routes, admin_key, "/apisix/admin/routes")
+    
+    def get_admin_key(configmap_directory: str) -> str:
+        admin_key = ""
+        with open(os.path.join(configmap_directory, "config.yaml")) as f:
+            content = f.read()
+            data = yaml.safe_load(content)
+            try:
+                for key_entry in data["deployment"]["admin"]["admin_key"]:
+                    if key_entry["role"] == "admin":
+                        admin_key = key_entry["key"]
+                        break
+            except Exception as e:
+                print(data)
+                raise e
+        if not admin_key:
+            raise ValueError("cannot find admin key in config.yaml")
+        return admin_key
+    
+    def make_api_call_from_files(dir_path: str, admin_key: str, api_path_postfix: str):
+        print(api_path_postfix)
+        dir_entries = os.listdir(dir_path)
+        print(dir_entries)
+        for filename in dir_entries:
+            if filename[0] == ".":
+                # ignore dot files
+                continue
+            file_path = os.path.join(dir_path, filename)
+            try:
+                with open(file_path) as f:
+                    content = f.read()
+                    environment = jinja2.Environment()
+                    template = environment.from_string(content)
+                    data = json.loads(template.render(**load_env()))
+            except Exception as e:
+                print("{} is not valid json".format(file_path))
+                print(content)
+                raise e
+            if api_path_postfix.endswith("consumers"):
+                url = admin_api_url + os.path.join(api_path_postfix)
+            else:
+            # use filename as name of the resource (route/upstream)
+                url = admin_api_url + os.path.join(api_path_postfix, filename)
+            print(url)
+            r = requests.put(url, headers={"X-API-KEY": admin_key}, json=data)
+            r.raise_for_status()
+    
+    def load_env() -> Dict[str, str]:
+        result = {}
+        for name in os.environ:
+            if name.startswith("CHATUR_"):
+                result[name] = os.environ[name]
+        return result
+    
+    if __name__ == "__main__":
+        main()
