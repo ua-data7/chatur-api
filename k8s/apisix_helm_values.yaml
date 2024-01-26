@@ -1,0 +1,9 @@
+# --set etcd.replicaCount=1 --set 'apisix.admin.allow.ipList={0.0.0.0/0}'
+etcd:
+  # cannot be greater than number of nodes
+  replicaCount: 1
+apisix:
+  admin:
+    allow:
+      ipList:
+        - "0.0.0.0/0"
