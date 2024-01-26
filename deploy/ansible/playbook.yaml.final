@@ -1,0 +1,130 @@
+- hosts: all
+  any_errors_fatal: true
+  gather_facts: false
+  tags: find_user
+  become: false
+  tasks:
+  - name: SET_FACT; set python interpreter
+    set_fact: ansible_python_interpreter="/usr/bin/python3"
+
+  - name: WAIT_FOR; Wait for ssh to be avaliable and connect
+    wait_for:
+      port: 22
+      host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+      search_regex: OpenSSH
+      delay: 10
+      timeout: 600
+    connection: local
+
+  # wait for 1 minute after establishing a connection
+  - name: PAUSE; because Jetstream 2 networking
+    pause:
+      minutes: 1
+
+  - include: 'find_connection.yml'
+    loop: "{{ CONNECTION_USERNAMES }}"
+
+  - fail:
+      msg: "?Could not find a valid ansible_user for subsequent ssh connections; exiting playbook."
+    when: ansible_user is not defined
+
+  - name: LINEINFILE; remove 'Defaults requiretty', if it exists
+    lineinfile:
+      dest: /etc/sudoers
+      line: 'Defaults requiretty'
+      state: absent
+    become: true
+    vars:
+        ansible_ssh_pipelining: no
+
+  - name: GATHER_FACTS
+    gather_facts:
+    become: true
+
+# This section is for k3s
+- hosts: k3s_cluster
+  tags: k3s_install
+  become: true
+  roles:
+  - cyverse-ansible.ansible_k3s
+
+# This section is for installing k3s tools
+- hosts: k3s_masters
+  tags: k3s_tools
+  become: true
+  tasks:
+  - name: SHELL; download the latest kubectl
+    shell:
+      cmd: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chdir: /tmp
+
+  - name: SHELL; install kubectl
+    shell:
+      cmd: install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      chdir: /tmp
+
+  - name: FILE; set permissions for /etc/rancher/k3s/k3s.yaml
+    file:
+      path: /etc/rancher/k3s/k3s.yaml
+      mode: 0744
+
+  - name: FILE; create .kube dir for root
+    file:
+      path: /root/.kube
+      mode: 0700
+      state: directory
+
+  - name: FILE; create .kube dir for ansible_user
+    file:
+      path: "/home/{{ ansible_user }}/.kube"
+      mode: 0700
+      state: directory
+    become: false
+
+  - name: FILE; link /etc/rancher/k3s/k3s.yaml for root
+    file:
+      src: "/etc/rancher/k3s/k3s.yaml"
+      dest: "/root/.kube/config"
+      state: link
+
+  - name: FILE; link /etc/rancher/k3s/k3s.yaml for ansible_user
+    file:
+      src: "/etc/rancher/k3s/k3s.yaml"
+      dest: "/home/{{ ansible_user }}/.kube/config"
+      state: link
+    become: false
+
+  - name: STAT; check if user exists in /home directory, otherwise punt this section
+    stat:
+      path: "/home/{{ CACAO_USER }}"
+    register: home_dir
+
+  - block:
+    - name: FILE; create .kube dir for {{ CACAO_USER }}
+      file:
+        path: "/home/{{ CACAO_USER }}/.kube"
+        owner: "{{ CACAO_USER }}"
+        mode: 0700
+        state: directory
+
+    - name: FILE; link /etc/rancher/k3s/k3s.yaml for {{ CACAO_USER }}
+      file:
+        src: "/etc/rancher/k3s/k3s.yaml"
+        dest: "/home/{{ CACAO_USER }}/.kube/config"
+        state: link
+
+    when: home_dir.stat.isdir is defined and home_dir.stat.isdir
+
+# This section is for k8s_apply
+- hosts: k3s_cluster
+  tags: k8s_apply
+  become: true
+  gather_facts: yes
+  roles:
+    - {role: cyverse-ansible.ansible_k8s_apply, when: "RUN_K8S_APPLY is defined and RUN_K8S_APPLY|bool" }
+
+- hosts: k3s_masters[0]
+  tags: manifests
+  become: true
+  roles:
+    - deploy

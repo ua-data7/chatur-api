@@ -1,0 +1,34 @@
+username = "someuser"
+project = "someproject"
+instance_name = "testinstance"
+instance_count = 1
+image = "some-image-uuid"
+#image_name = "some-image-name"
+flavor = "m3.small"
+#flavor_master = "m3.medium"
+keypair = "someuser-keypair"
+power_state = "active"
+ip_pool = "public"
+user_data = ""
+do_ansible_execution=true
+
+chatur_oauth2_client_id = ""
+chatur_oauth2_client_secret = ""
+chatur_oauth2_discovery = ""
+chatur_oauth2_realm = ""
+chatur_oauth2_secret = ""
+chatur_api_key = ""
+chatur_address = ""
+
+# optional
+#master_floating_ip = "1.2.3.4"
+#master_hostname = "www.randomname.com"
+#enable_gpu = false
+#gpu_timeslice_enable = true
+#gpu_timeslice_num = 2
+#k3s_traefik_disable = false
+#ansible-k8s-apply = false
+#k8s_apply_is_http = false
+#k8s_apply_resource = "YXBpVmVyc2lvbjogYXBwcy92MVxua2luZDogRGVwbG95bWVudFxubWV0YWRhdGE6XG4gIG5hbWU6IG5naW54LWRlcGxveW1lbnRcbiAgbGFiZWxzOlxuICAgIGFwcDogbmdpbnhcbnNwZWM6XG4gIHJlcGxpY2FzOiAzXG4gIHNlbGVjdG9yOlxuICAgIG1hdGNoTGFiZWxzOlxuICAgICAgYXBwOiBuZ2lueFxuICB0ZW1wbGF0ZTpcbiAgICBtZXRhZGF0YTpcbiAgICAgIGxhYmVsczpcbiAgICAgICAgYXBwOiBuZ2lueFxuICAgIHNwZWM6XG4gICAgICBjb250YWluZXJzOlxuICAgICAgLSBuYW1lOiBuZ2lueFxuICAgICAgICBpbWFnZTogbmdpbng6MS4xNC4yXG4gICAgICAgIHBvcnRzOlxuICAgICAgICAtIGNvbnRhaW5lclBvcnQ6IDgwCg=="
+#k8s_apply_ports = ["port-servicea:80","port-serviceb:8080"]
+#k8s_apply_ports = "port-servicea:80,port-serviceb:8080"

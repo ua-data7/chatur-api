@@ -1,0 +1,2 @@
+MANIFESTS_DIR: /root/
+KUBE_CONFIG_FILE: /etc/rancher/k3s/k3s.yaml 

@@ -1,0 +1,70 @@
+# This is a general purpose terraform -> ansible inventory template
+# Using this template, there are many ways to refer to hosts
+#   'all' can be used to refer to all hosts, of course
+#   'group_name[0]'
+#   name of resource + index
+# The k3-* groups should be left in for ansible-k3s, if we want to be able to use it
+# if you want to change the template on an existing `terraform apply` or change the inputs, just do another `terraform apply` and the new inventory will be generated
+all:
+    hosts:
+        ${ master_name}:
+            ansible_host: ${ k3s_hostname }
+%{ for index, group in worker_ips }
+        ${ worker_names[index] }:
+            ansible_host: ${ worker_ips[index] }
+%{ endfor }
+    vars:
+        CONNECTION_USERNAMES:
+          - '${ cacao_user }'
+          - 'ubuntu'
+          - 'almalinux'
+          - 'rocky'
+          - 'centos'
+#          - 'debian'
+#          - 'fedora'
+#          - 'cloud-user'
+#          - 'opensuse'
+          - 'root'
+        CACAO_USER: ${ cacao_user }
+        CHATUR_OAUTH2_CLIENT_ID: ${ chatur_oauth2_client_id }
+        CHATUR_OAUTH2_CLIENT_SECRET: ${ chatur_oauth2_client_secret }
+        CHATUR_OAUTH2_DISCOVERY: ${ chatur_oauth2_discovery }
+        CHATUR_OAUTH2_REALM: ${ chatur_oauth2_realm }
+        CHATUR_OAUTH2_SECRET: ${ chatur_oauth2_secret }
+        CHATUR_API_KEY: ${ chatur_api_key }
+        CHATUR_ADDRESS: ${ chatur_address }
+        RUN_K8S_APPLY: ${ run_k8s_apply }
+        IS_HTTP: ${ k8s_apply_is_http }
+        IS_BASE64: ${ k8s_apply_is_base64 }
+        K8S_RESOURCE: ${ k8s_apply_resource }
+        K3S_DOCKER_ENABLE: true
+%{ if length(k8s_apply_ports) > 0 ~}
+        K3S_PORTS:
+%{ for p in k8s_apply_ports ~}
+        - ${ p }
+%{ endfor ~}
+%{ endif ~}
+        # This is temporary, as of 8/25/2022 k3s default install breaks without setting version
+        K3S_VERSION: "v1.24.4+k3s1"
+    children:
+        k3s_masters:
+            hosts:
+                ${ master_name }:
+        k3s_agents:
+            hosts:
+%{ for index, group in worker_names ~}
+                ${ worker_names[index] }:
+%{ endfor ~}
+        k3s_cluster:
+            children:
+                k3s_masters:
+                k3s_agents:
+            vars:
+                K3S_TRAEFIK_ENABLE: ${ !traefik_disable }
+%{ if gpu_enable ~}
+                K3S_GPU_ENABLE: ${ gpu_enable }
+%{ if gpu_timeslice_enable ~}
+                K3S_GPU_TIMESLICE_ENABLE: ${ gpu_timeslice_enable }
+                K3S_GPU_TIMESLICE_NUM: ${ gpu_timeslice_num }
+%{ endif ~}
+%{ endif ~}

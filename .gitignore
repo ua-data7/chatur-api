@@ -1,0 +1,15 @@
+openrc.sh
+*.tfvars
+tf.out
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+tmp
+plan.out
+hosts.yaml
+hosts.yml
+student_assignments.csv
+student_assignments.csv
+config.yml
+

@@ -1,0 +1,11 @@
+roles:
+- src: cyverse-ansible.docker
+- src: cyverse-ansible.ansible_k3s
+- src: cyverse-ansible.ansible_k8s_apply 
+
+collections:
+- ansible.posix
+- community.docker
+- community.postgresql
+- community.general
+- kubernetes.core

@@ -1,0 +1,173 @@
+{
+  "schema_url": "https://gitlab.com/cyverse/cacao-common/-/raw/master/template/metadata-schemas/v3/schema.json",
+  "schema_version": "3",
+  "name": "single image with k3s",
+  "author": "Edwin Skidmore",
+  "author_email": "edwin@cyverse.org",
+  "description": "launch a multi-vm kubernetes cluster (k3s)",
+  "template_type": "openstack_terraform",
+  "purpose": "openstack_compute",
+  "cacao_pre_tasks": [],
+  "cacao_post_tasks": [
+    {
+      "type": "ansible",
+      "location": "cacao_k3s"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "flavor",
+      "type": "cacao_provider_flavor",
+      "default": "m3.medium",
+      "description": "Instance size/type for worker instances"
+    },
+    {
+      "name": "image",
+      "type": "cacao_provider_image",
+      "default": "",
+      "description": "Boot image id"
+    },
+    {
+      "name": "image_name",
+      "type": "cacao_provider_image_name",
+      "default": "",
+      "description": "Boot image name"
+    },
+    {
+      "name": "ip_pool",
+      "type": "cacao_provider_external_network",
+      "default": "external_network_name",
+      "description": "IP pool"
+    },
+    {
+      "name": "keypair",
+      "type": "cacao_provider_key_pair",
+      "default": "cacao-ssh-key",
+      "description": "Key-pair for instance access"
+    },
+    {
+      "name": "project",
+      "type": "cacao_provider_project",
+      "description": "OpenStack Project ID"
+    },
+    {
+      "name": "region",
+      "type": "cacao_provider_region",
+      "default": "IU",
+      "description": "Openstack region"
+    },
+    {
+      "name": "user_data",
+      "type": "cacao_cloud_init",
+      "description": "cloud init script"
+    },
+    {
+      "name": "username",
+      "type": "cacao_username",
+      "default": "username",
+      "description": "CACAO username"
+    },
+    {
+      "name": "gpu_enable",
+      "type": "bool",
+      "description": "enable gpu components within jupyterhub"
+    },
+    {
+      "name": "gpu_timeslice_enable",
+      "type": "bool",
+      "default": false,
+      "ui_label": "enable gpu time slicing",
+      "description": "enable gpu time slicing"
+    },
+    {
+      "name": "gpu_timeslice_num",
+      "type": "integer",
+      "default": 0,
+      "ui_label": "number of gpu time slices",
+      "description": "number of gpu time slices, default is auto slice (0)"
+    },
+    {
+      "name": "instance_count",
+      "type": "integer",
+      "default": 1,
+      "description": "# of instances"
+    },
+    {
+      "name": "instance_name",
+      "type": "string",
+      "description": "Instance name"
+    },
+    {
+      "name": "k3s_traefik_disable",
+      "type": "bool",
+      "description": "disable traefik ingress in k3s"
+    },
+    {
+      "name": "k8s_apply_is_http",
+      "type": "bool",
+      "default": true,
+      "description": "bool, if true k8s apply will use a http link to a yaml otherwise will use a string of a full file"
+    },
+    {
+      "name": "k8s_apply_ports",
+      "type": "string",
+      "default": "",
+      "description": "a comman-separated string of port-service-name:port_numbers for the ingress made by k8s apply"
+    },
+    {
+      "name": "k8s_apply_resource_base64",
+      "type": "string",
+      "default": "",
+      "description": "a base64-encoded string of either a link or a full yaml file(required if run_k8s_apply is true)"
+    },
+    {
+      "name": "power_state",
+      "type": "string",
+      "default": "active",
+      "description": "Power state",
+      "enum": [
+        "active",
+        "shutoff",
+        "suspend",
+        "shelved_offloaded"
+      ]
+    },
+    {
+      "name": "root_storage_delete_on_termination",
+      "type": "bool",
+      "default": true,
+      "description": "if true, will delete the root storage when instance is deleted"
+    },
+    {
+      "name": "root_storage_size",
+      "type": "integer",
+      "default": -1,
+      "description": "Size of root storage in GB"
+    },
+    {
+      "name": "root_storage_source",
+      "type": "string",
+      "default": "image",
+      "description": "Source of root disk; currently, only image is supported ",
+      "enum": [
+        "image"
+      ]
+    },
+    {
+      "name": "root_storage_type",
+      "type": "string",
+      "default": "local",
+      "description": "type of root storage, either local or volume",
+      "enum": [
+        "local",
+        "volume"
+      ]
+    },
+    {
+      "name": "run_k8s_apply",
+      "type": "bool",
+      "default": false,
+      "description": "bool, if true will run k8s apply"
+    }
+  ]
+}
