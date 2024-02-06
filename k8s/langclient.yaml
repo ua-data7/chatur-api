@@ -47,7 +47,7 @@ spec:
           mountPath: "/vectordb"
       containers:
       - name: langclient
-        image: harbor.cyverse.org/ai/langclient:0.0.4
+        image: harbor.cyverse.org/ai/langclient:0.0.5
         command:
         - "python3"
         - "/opt/langserve/langclient.py"
@@ -56,6 +56,7 @@ spec:
         - "80"
         - "/vectordb/RNR355"
         - "ollama"
+        - "mixtral"
         resources:
           requests:
             cpu: "200m"

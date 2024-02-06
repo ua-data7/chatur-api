@@ -20,7 +20,7 @@ spec:
       volumes:
       - name: llm-model
         emptyDir:
-          sizeLimit: 10Gi
+          sizeLimit: 30Gi
       restartPolicy: Always
       containers:
       - name: ollama
@@ -29,11 +29,11 @@ spec:
           requests:
             cpu: "500m"
             memory: "10Gi"
-            ephemeral-storage: "20Gi"
+            ephemeral-storage: "40Gi"
           limits:
             cpu: "8"
             memory: "20Gi"
-            ephemeral-storage: "20Gi"
+            ephemeral-storage: "40Gi"
             nvidia.com/gpu: 1
         ports:
         - name: listen-port
