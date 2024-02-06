@@ -28,11 +28,11 @@ spec:
         resources:
           requests:
             cpu: "500m"
-            memory: "30Gi"
+            memory: "250Gi"
             ephemeral-storage: "40Gi"
           limits:
-            cpu: "64"
-            memory: "40Gi"
+            cpu: "192"
+            memory: "300Gi"
             ephemeral-storage: "50Gi"
             nvidia.com/gpu: 1
         ports:
