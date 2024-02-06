@@ -28,12 +28,12 @@ spec:
         resources:
           requests:
             cpu: "500m"
-            memory: "10Gi"
+            memory: "30Gi"
             ephemeral-storage: "40Gi"
           limits:
-            cpu: "8"
-            memory: "20Gi"
-            ephemeral-storage: "40Gi"
+            cpu: "64"
+            memory: "40Gi"
+            ephemeral-storage: "50Gi"
             nvidia.com/gpu: 1
         ports:
         - name: listen-port
@@ -44,7 +44,7 @@ spec:
               command:
               - "ollama"
               - "pull"
-              - "mistral"
+              - "mixtral"
         livenessProbe:
           httpGet:
             path: /
