@@ -47,7 +47,7 @@ spec:
           mountPath: "/vectordb"
       containers:
       - name: langclient
-        image: harbor.cyverse.org/ai/langclient:0.0.5
+        image: harbor.cyverse.org/ai/langclient:0.0.6
         command:
         - "python3"
         - "/opt/langserve/langclient.py"
@@ -55,6 +55,7 @@ spec:
         - "0.0.0.0"
         - "80"
         - "/vectordb/RNR355"
+        - "langchain"
         - "ollama"
         - "mixtral"
         resources:
