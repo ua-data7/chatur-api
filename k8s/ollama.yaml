@@ -44,7 +44,7 @@ spec:
               command:
               - "ollama"
               - "pull"
-              - "mixtral"
+              - "mistral"
         livenessProbe:
           httpGet:
             path: /

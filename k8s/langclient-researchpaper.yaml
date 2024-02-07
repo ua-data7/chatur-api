@@ -57,7 +57,7 @@ spec:
         - "/vectordb/RESEARCHPAPER"
         - "langchain"
         - "ollama"
-        - "mixtral"
+        - "mistral"
         resources:
           requests:
             cpu: "200m"

@@ -57,7 +57,7 @@ spec:
         - "/vectordb/CYVERSE"
         - "langchain"
         - "ollama"
-        - "mixtral"
+        - "mistral"
         resources:
           requests:
             cpu: "200m"
