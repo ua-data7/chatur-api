@@ -54,7 +54,7 @@ spec:
         args:
         - "0.0.0.0"
         - "80"
-        - "/vectordb/RNR355"
+        - "/vectordb/RESEARCHPAPER"
         - "langchain"
         - "ollama"
         - "mistral"
