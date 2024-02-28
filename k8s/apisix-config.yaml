@@ -84,7 +84,7 @@ stringData:
     {
       "methods": ["GET", "POST"],
       "uri": "/v1/*",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
          "key-auth": {
@@ -97,7 +97,7 @@ stringData:
     {
       "methods": ["GET", "POST"],
       "uri": "/v1/chat/completions",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
         "key-auth": {
@@ -110,7 +110,7 @@ stringData:
     {
         "methods": ["GET", "POST"],
         "uri": "/ollama/*",
-        "host": "chatur-api.cyverse.ai",
+        "host": "chatur-dev.cyverse.ai",
         "priority": 100,
         "plugins": {
           "key-auth": {
@@ -126,7 +126,7 @@ stringData:
     {
         "methods": ["GET", "POST"],
         "uri": "/ollama/api/generate/",
-        "host": "chatur-api.cyverse.ai",
+        "host": "chatur-dev.cyverse.ai",
         "priority": 110,
         "plugins": {
           "proxy-rewrite": {
@@ -146,7 +146,7 @@ stringData:
     {
       "methods": ["GET", "POST"],
       "uri": "/langserve/*",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
         "limit-req": {
@@ -159,11 +159,96 @@ stringData:
       },
       "upstream_id": "langserve"
     }
+  langserve_cyverse: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-cyverse/*",
+      "host": "chatur-dev.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-cyverse"
+    }
+  langserve_mkdocs: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-mkdocs/*",
+      "host": "chatur-dev.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-mkdocs"
+    }
+  langserve_researchpaper: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-researchpaper/*",
+      "host": "chatur-dev.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-researchpaper"
+    }
+  langserve_rnr355: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-rnr355/*",
+      "host": "chatur-dev.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-rnr355"
+    }
+  langserve_techlauncharizona: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-techlauncharizona/*",
+      "host": "chatur-dev.cyverse.ai",
+      "priority": 100,
+      "plugins": {
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-techlauncharizona"
+    }
   langserve_playground: |
     {
       "methods": ["GET"],
       "uri": "/langserve/playground",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
         "limit-req": {
@@ -180,7 +265,7 @@ stringData:
     {
       "methods": ["POST"],
       "uri": "/langserve/stream_log",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
         "limit-req": {
@@ -196,7 +281,7 @@ stringData:
   ui: |
     {
       "uri": "/*",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 10,
       "plugins": {
         "openid-connect": {
@@ -206,11 +291,11 @@ stringData:
           "scope": "openid email profile",
           "bearer_only": false,
           "realm": "{{ CHATUR_OAUTH2_REALM }}",
-          "redirect_uri": "https://chatur-api.cyverse.ai/redirect",
+          "redirect_uri": "https://chatur-dev.cyverse.ai/redirect",
           "logout_path": "/logout",
-    	    "set_userinfo_header": true,
-    	    "session": {
-    	      "secret": "{{ CHATUR_OAUTH2_SECRET }}"
+            "set_userinfo_header": true,
+            "session": {
+              "secret": "{{ CHATUR_OAUTH2_SECRET }}"
           }
         }
       },
@@ -220,7 +305,7 @@ stringData:
     {
       "methods": ["GET"],
       "uri": "/images/*",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
       },
@@ -230,7 +315,7 @@ stringData:
     {
       "methods": ["GET"],
       "uri": "/favicon.ico",
-      "host": "chatur-api.cyverse.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
       },
@@ -247,7 +332,7 @@ stringData:
     {
       "type": "roundrobin",
       "nodes": {
-        "chatur-api-server.chatur.svc:80": 1
+        "chatur-dev-server.chatur.svc:80": 1
       }
     }
   ollama: |
@@ -262,6 +347,41 @@ stringData:
       "type": "roundrobin",
       "nodes": {
         "langclient.chatur.svc:80": 1
+      }
+    }
+  langserve-cyverse: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-cyverse.chatur.svc:80": 1
+      }
+    }
+  langserve-mkdocs: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-mkdocs.chatur.svc:80": 1
+      }
+    }
+  langserve-researchpaper: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-researchpaper.chatur.svc:80": 1
+      }
+    }
+  langserve-rnr355: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-rnr355.chatur.svc:80": 1
+      }
+    }
+  langserve-techlauncharizona: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-rnr355.chatur.svc:80": 1
       }
     }
   ui: |
@@ -279,7 +399,7 @@ metadata:
   namespace: apisix
 stringData:
   chatur: |
-    {"username":"chartur","plugins":{"key-auth":{"key":"Bearer {{ CHATUR_API_KEY }}","header":"Authorization"}}} 
+    {"username":"chartur","plugins":{"key-auth":{"key":"Bearer {{ CHATUR_API_KEY }}","header":"Authorization"}}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -295,15 +415,15 @@ data:
     import yaml
     import json
     from typing import Dict
-    
+
     # call the apisix-admin service
     admin_api_url = "http://apisix-admin:9180"
-    
+
     def main():
         parser = argparse.ArgumentParser(
             prog="entrypoint",
             description="Configure apisix via its admin api")
-    
+
         parser.add_argument("--apisix_configmap", type=str, help="directory that apisix's configmap is mounted")
         parser.add_argument("--routes", type=str, required=True, help="directory for routes json files")
         parser.add_argument("--upstreams", type=str, required=True, help="directory for upstreams json files")
@@ -311,7 +431,7 @@ data:
         parser.add_argument("--admin_key", type=str, help="get admin key from cli args instead of from files")
         parser.add_argument("--admin_api_url", type=str, default="http://apisix-admin:9180", help="admin api url")
         args = parser.parse_args()
-    
+
         global admin_api_url
         admin_api_url = args.admin_api_url
         if args.admin_key:
@@ -321,7 +441,7 @@ data:
         make_api_call_from_files(args.consumers, admin_key, "/apisix/admin/consumers")
         make_api_call_from_files(args.upstreams, admin_key, "/apisix/admin/upstreams")
         make_api_call_from_files(args.routes, admin_key, "/apisix/admin/routes")
-    
+
     def get_admin_key(configmap_directory: str) -> str:
         admin_key = ""
         with open(os.path.join(configmap_directory, "config.yaml")) as f:
@@ -338,7 +458,7 @@ data:
         if not admin_key:
             raise ValueError("cannot find admin key in config.yaml")
         return admin_key
-    
+
     def make_api_call_from_files(dir_path: str, admin_key: str, api_path_postfix: str):
         print(api_path_postfix)
         dir_entries = os.listdir(dir_path)
@@ -366,13 +486,13 @@ data:
             print(url)
             r = requests.put(url, headers={"X-API-KEY": admin_key}, json=data)
             r.raise_for_status()
-    
+
     def load_env() -> Dict[str, str]:
         result = {}
         for name in os.environ:
             if name.startswith("CHATUR_"):
                 result[name] = os.environ[name]
         return result
-    
+
     if __name__ == "__main__":
         main()
