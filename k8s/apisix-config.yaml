@@ -166,6 +166,9 @@ stringData:
       "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-cyverse", "/langserve"]
+        },
         "limit-req": {
             "rate": 10,
             "burst": 20,
@@ -183,6 +186,9 @@ stringData:
       "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-mkdocs", "/langserve"]
+        },
         "limit-req": {
             "rate": 10,
             "burst": 20,
@@ -200,6 +206,9 @@ stringData:
       "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-researchpaper", "/langserve"]
+        },
         "limit-req": {
             "rate": 10,
             "burst": 20,
@@ -217,6 +226,9 @@ stringData:
       "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-rnr355", "/langserve"]
+        },
         "limit-req": {
             "rate": 10,
             "burst": 20,
@@ -234,6 +246,9 @@ stringData:
       "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-techlauncharizona", "/langserve"]
+        },
         "limit-req": {
             "rate": 10,
             "burst": 20,
