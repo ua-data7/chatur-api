@@ -159,6 +159,26 @@ stringData:
       },
       "upstream_id": "langserve"
     }
+  langserve_chishiki: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-chishiki/*",
+      "host": "chatur-dev.chishiki.ai",
+      "priority": 100,
+      "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-chishiki", "/langserve"]
+        },
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-chishiki"
+    }
   langserve_cyverse: |
     {
       "methods": ["GET", "POST"],
@@ -362,6 +382,13 @@ stringData:
       "type": "roundrobin",
       "nodes": {
         "langclient.chatur.svc:80": 1
+      }
+    }
+  langserve-chishiki: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-chishiki.chatur.svc:80": 1
       }
     }
   langserve-cyverse: |
