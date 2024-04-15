@@ -199,6 +199,26 @@ stringData:
       },
       "upstream_id": "langserve-cyverse"
     }
+  langserve_eceantennas: |
+    {
+      "methods": ["GET", "POST"],
+      "uri": "/langserve-eceantennas/*",
+      "host": "chatur-dev.eceantennas.ai",
+      "priority": 100,
+      "plugins": {
+        "proxy-rewrite": {
+          "regex_uri": ["^/langserve-eceantennas", "/langserve"]
+        },
+        "limit-req": {
+            "rate": 10,
+            "burst": 20,
+            "rejected_code": 429,
+            "key_type": "var",
+            "key": "remote_addr"
+        }
+      },
+      "upstream_id": "langserve-eceantennas"
+    }
   langserve_mkdocs: |
     {
       "methods": ["GET", "POST"],
@@ -396,6 +416,13 @@ stringData:
       "type": "roundrobin",
       "nodes": {
         "langclient-cyverse.chatur.svc:80": 1
+      }
+    }
+  langserve-eceantennas: |
+    {
+      "type": "roundrobin",
+      "nodes": {
+        "langclient-eceantennas.chatur.svc:80": 1
       }
     }
   langserve-mkdocs: |
