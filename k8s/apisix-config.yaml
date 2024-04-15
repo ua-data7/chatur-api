@@ -203,7 +203,7 @@ stringData:
     {
       "methods": ["GET", "POST"],
       "uri": "/langserve-eceantennas/*",
-      "host": "chatur-dev.eceantennas.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
         "proxy-rewrite": {
