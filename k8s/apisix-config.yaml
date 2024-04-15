@@ -163,7 +163,7 @@ stringData:
     {
       "methods": ["GET", "POST"],
       "uri": "/langserve-chishiki/*",
-      "host": "chatur-dev.chishiki.ai",
+      "host": "chatur-dev.cyverse.ai",
       "priority": 100,
       "plugins": {
         "proxy-rewrite": {
